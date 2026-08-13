@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -111,7 +112,34 @@ public class TaskService {
         }
 
         task.setStatus(newStatus);
-        return toResponse(taskRepository.save(task));
+        TaskResponse result = toResponse(taskRepository.save(task));
+
+        // Neue Instanz sofort erstellen, wenn wiederkehrende Aufgabe erledigt wird
+        if (newStatus == TaskStatus.DONE && task.isRecurring() && task.getRecurrencePattern() != null) {
+            createNextRecurringTask(task);
+        }
+
+        return result;
+    }
+
+    private void createNextRecurringTask(Task completed) {
+        LocalDate base = completed.getDueDate() != null ? completed.getDueDate() : LocalDate.now();
+        LocalDate nextDue = switch (completed.getRecurrencePattern()) {
+            case DAILY   -> base.plusDays(1);
+            case WEEKLY  -> base.plusWeeks(1);
+            case MONTHLY -> base.plusMonths(1);
+        };
+
+        taskRepository.save(Task.builder()
+                .title(completed.getTitle())
+                .description(completed.getDescription())
+                .points(completed.getPoints())
+                .assignedTo(completed.getAssignedTo())
+                .createdBy(completed.getCreatedBy())
+                .dueDate(nextDue)
+                .recurring(true)
+                .recurrencePattern(completed.getRecurrencePattern())
+                .build());
     }
 
     @Transactional

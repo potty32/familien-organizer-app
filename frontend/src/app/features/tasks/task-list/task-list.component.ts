@@ -49,11 +49,7 @@ export class TaskListComponent implements OnInit {
 
   onStatusChange(event: { taskId: string; status: TaskStatus }): void {
     this.taskService.updateStatus(event.taskId, event.status).subscribe({
-      next: updated => {
-        this.tasks.update(tasks =>
-          tasks.map(t => t.id === updated.id ? updated : t)
-        );
-      },
+      next: () => this.loadTasks(),
       error: () => this.error.set('Status konnte nicht geändert werden.')
     });
   }
