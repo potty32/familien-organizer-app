@@ -1,9 +1,9 @@
 [build]
-builder = "NIXPACKS"
-buildCommand = "npm ci && npm run build -- --configuration production"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "nginx -g 'daemon off;'"
+startCommand = "/docker-entrypoint.sh"
 healthcheckPath = "/"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"
