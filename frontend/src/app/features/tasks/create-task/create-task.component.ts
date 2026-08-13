@@ -25,12 +25,14 @@ export class CreateTaskComponent implements OnInit {
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
 
+  readonly isChild = this.session.activeUser()?.role === 'CHILD';
+
   readonly form = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(100)]],
     description: [''],
-    points: [null as number | null, [Validators.min(0), Validators.max(1000)]],
+    points: [{ value: 10, disabled: this.isChild }, [Validators.min(0), Validators.max(1000)]],
     assignedToId: ['', Validators.required],
-    dueDate: [''],
+    dueDate: [new Date().toISOString().split('T')[0]],
     recurring: [false],
     recurrencePattern: [null as string | null]
   });
@@ -57,7 +59,7 @@ export class CreateTaskComponent implements OnInit {
     this.submitting.set(true);
     this.error.set(null);
 
-    const val = this.form.value;
+    const val = this.form.getRawValue();
     this.taskService.create({
       title: val.title!,
       description: val.description || undefined,

@@ -48,10 +48,14 @@
       </div>
 
       <div class="field">
-        <label class="field__label" for="points">Punkte</label>
+        <label class="field__label" for="points">
+          Punkte
+          @if (isChild) { <span class="field__label-hint">⭐ fest</span> }
+        </label>
         <input
           id="points"
           class="field__input"
+          [class.field__input--locked]="isChild"
           type="number"
           formControlName="points"
           placeholder="0–1000"

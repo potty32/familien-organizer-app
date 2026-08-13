@@ -96,11 +96,21 @@
     width: 100%;
 
     &:focus { outline: none; border-color: #2563eb; }
-    &--error { border-color: #ef4444; }
+    &--error  { border-color: #ef4444; }
     &--textarea { resize: vertical; }
     &--select { cursor: pointer; }
+    &--locked { opacity: 0.55; cursor: not-allowed; }
 
     option { background: #1e1e1e; }
+  }
+
+  &__label-hint {
+    font-size: 0.72rem;
+    color: #f59e0b;
+    font-weight: 600;
+    margin-left: 0.4rem;
+    text-transform: none;
+    letter-spacing: 0;
   }
 
   &__error {
