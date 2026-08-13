@@ -1,0 +1,96 @@
+# ============================================================
+# Spring Boot / Maven
+# ============================================================
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/.mvn/wrapper/maven-wrapper.properties
+!backend/.mvn/wrapper/
+*.class
+*.log
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# Maven
+.flattened-pom.xml
+
+# Spring Boot devtools
+.spring-boot-devtools.properties
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# IDE - Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# IDE - VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ============================================================
+# Angular / Node.js
+# ============================================================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.sass-cache/
+frontend/connect.lock
+frontend/coverage/
+frontend/libpeerconnection.log
+frontend/npm-debug.log
+frontend/yarn-error.log
+frontend/.pnpm-debug.log*
+frontend/testem.log
+frontend/typings/
+frontend/.DS_Store
+frontend/Thumbs.db
+
+# ============================================================
+# Environment & Secrets (niemals committen!)
+# ============================================================
+.env
+.env.local
+.env.*.local
+*.env
+application-local.properties
+application-secret.properties
+
+# ============================================================
+# OS
+# ============================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ============================================================
+# Docker
+# ============================================================
+docker-compose.override.yml
