@@ -34,4 +34,16 @@ export class TaskCardComponent {
     };
     return labels[this.task().status];
   }
+
+  get dueDateClass(): string {
+    const due = this.task().dueDate;
+    if (!due || this.task().status === 'DONE') return '';
+    const d = new Date(due); d.setHours(0, 0, 0, 0);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+    if (d < today) return 'due--overdue';
+    if (d.getTime() === today.getTime()) return 'due--today';
+    if (d.getTime() === tomorrow.getTime()) return 'due--tomorrow';
+    return '';
+  }
 }

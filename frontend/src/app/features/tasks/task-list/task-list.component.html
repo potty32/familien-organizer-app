@@ -1,16 +1,13 @@
 <div class="task-list">
+
   <div class="task-list__toolbar">
     <div class="task-list__filters">
-      <button
-        class="filter-btn"
-        [class.active]="filterMode() === 'all'"
-        (click)="setFilter('all')"
-      >Alle Aufgaben</button>
-      <button
-        class="filter-btn"
-        [class.active]="filterMode() === 'mine'"
-        (click)="setFilter('mine')"
-      >Meine Aufgaben</button>
+      <button class="filter-btn" [class.active]="filterMode() === 'all'" (click)="setFilter('all')">
+        Alle <span class="filter-btn__count">{{ tasks().length }}</span>
+      </button>
+      <button class="filter-btn" [class.active]="filterMode() === 'mine'" (click)="setFilter('mine')">
+        Meine
+      </button>
     </div>
     <a routerLink="/app/tasks/new" class="btn-new">+ Neue Aufgabe</a>
   </div>
@@ -20,26 +17,27 @@
   }
 
   @if (loading()) {
-    <div class="task-list__loading">
-      <div class="spinner"></div>
-    </div>
+    <div class="task-list__loading"><div class="spinner"></div></div>
   }
 
   @if (!loading()) {
-    @if (filteredTasks().length === 0) {
+    @if (activeTaskCount() === 0 && doneTasks().length === 0) {
       <div class="task-list__empty">
         <p>Keine Aufgaben vorhanden.</p>
         <a routerLink="/app/tasks/new" class="btn-new">+ Erste Aufgabe anlegen</a>
       </div>
     }
 
-    @if (inProgressTasks().length > 0) {
-      <section class="task-list__section">
-        <h2 class="task-list__section-title task-list__section-title--progress">
-          In Arbeit ({{ inProgressTasks().length }})
+    <!-- Zeitbasierte Gruppen (nur offene + in Arbeit) -->
+    @for (group of taskGroups(); track group.label) {
+      <section class="task-group" [class]="group.colorClass">
+        <h2 class="task-group__title">
+          <span class="task-group__icon">{{ group.icon }}</span>
+          {{ group.label }}
+          <span class="task-group__count">{{ group.tasks.length }}</span>
         </h2>
-        <div class="task-list__grid">
-          @for (task of inProgressTasks(); track task.id) {
+        <div class="task-group__grid">
+          @for (task of group.tasks; track task.id) {
             <app-task-card
               [task]="task"
               (statusChange)="onStatusChange($event)"
@@ -50,36 +48,28 @@
       </section>
     }
 
-    @if (openTasks().length > 0) {
-      <section class="task-list__section">
-        <h2 class="task-list__section-title">Offen ({{ openTasks().length }})</h2>
-        <div class="task-list__grid">
-          @for (task of openTasks(); track task.id) {
-            <app-task-card
-              [task]="task"
-              (statusChange)="onStatusChange($event)"
-              (deleteTask)="onDelete($event)"
-            />
-          }
-        </div>
-      </section>
-    }
-
+    <!-- Erledigte Aufgaben (einklappbar) -->
     @if (doneTasks().length > 0) {
-      <section class="task-list__section">
-        <h2 class="task-list__section-title task-list__section-title--done">
-          Erledigt ({{ doneTasks().length }})
-        </h2>
-        <div class="task-list__grid">
-          @for (task of doneTasks(); track task.id) {
-            <app-task-card
-              [task]="task"
-              (statusChange)="onStatusChange($event)"
-              (deleteTask)="onDelete($event)"
-            />
-          }
-        </div>
+      <section class="task-group task-group--done">
+        <button class="task-group__toggle" (click)="toggleDone()">
+          <span class="task-group__icon">✅</span>
+          Erledigt
+          <span class="task-group__count">{{ doneTasks().length }}</span>
+          <span class="task-group__chevron">{{ showDone() ? '▲' : '▼' }}</span>
+        </button>
+        @if (showDone()) {
+          <div class="task-group__grid">
+            @for (task of doneTasks(); track task.id) {
+              <app-task-card
+                [task]="task"
+                (statusChange)="onStatusChange($event)"
+                (deleteTask)="onDelete($event)"
+              />
+            }
+          </div>
+        }
       </section>
     }
   }
+
 </div>

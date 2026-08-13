@@ -23,7 +23,9 @@
       <span>{{ task().assignedTo.displayName }}</span>
     </div>
     @if (task().dueDate) {
-      <span class="task-card__due">📅 {{ task().dueDate | date:'dd.MM.' }}</span>
+      <span class="task-card__due" [class]="dueDateClass">
+        📅 {{ task().dueDate | date:'dd.MM.' }}
+      </span>
     }
   </div>
 

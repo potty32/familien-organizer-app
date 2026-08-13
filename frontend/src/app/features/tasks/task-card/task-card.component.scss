@@ -89,6 +89,12 @@
   &__due {
     font-size: 0.8rem;
     color: #8c8c8c;
+    border-radius: 4px;
+    padding: 0.1rem 0.3rem;
+
+    &.due--overdue  { color: #f87171; background: rgba(239,68,68,0.1); font-weight: 600; }
+    &.due--today    { color: #fbbf24; background: rgba(245,158,11,0.1); font-weight: 600; }
+    &.due--tomorrow { color: #60a5fa; }
   }
 
   &__actions {

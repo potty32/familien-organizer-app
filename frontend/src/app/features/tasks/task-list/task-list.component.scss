@@ -1,7 +1,7 @@
 .task-list {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 
   &__toolbar {
     display: flex;
@@ -20,24 +20,16 @@
     padding: 0.3rem;
   }
 
-  &__section { display: flex; flex-direction: column; gap: 0.75rem; }
-
-  &__section-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #8c8c8c;
-
-    &--progress { color: #fbbf24; }
-    &--done { color: #34d399; }
+  &__error {
+    color: #f87171;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
   }
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 0.75rem;
-  }
+  &__loading { display: flex; justify-content: center; padding: 4rem; }
 
   &__empty {
     text-align: center;
@@ -48,24 +40,94 @@
     align-items: center;
     gap: 1.5rem;
   }
-
-  &__loading {
-    display: flex;
-    justify-content: center;
-    padding: 4rem;
-  }
-
-  &__error {
-    color: #f87171;
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-  }
 }
 
+// ── Gruppen ──────────────────────────────────────
+.task-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #6b7280;
+    padding: 0.2rem 0;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 0.5rem;
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #6b7280;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #2a2a2a;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: color 0.15s;
+
+    &:hover { color: #9ca3af; }
+  }
+
+  &__icon { font-size: 0.95rem; }
+
+  &__count {
+    background: rgba(255,255,255,0.08);
+    border-radius: 100px;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  &__chevron { margin-left: auto; font-size: 0.7rem; }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 0.65rem;
+  }
+
+  // Gruppen-Farben
+  &--overdue  .task-group__title,
+  &--overdue  .task-group__toggle { color: #f87171; }
+  &--overdue  .task-group__count  { background: rgba(239,68,68,0.15); }
+
+  &--today    .task-group__title,
+  &--today    .task-group__toggle { color: #fbbf24; }
+  &--today    .task-group__count  { background: rgba(245,158,11,0.15); }
+
+  &--tomorrow .task-group__title,
+  &--tomorrow .task-group__toggle { color: #60a5fa; }
+  &--tomorrow .task-group__count  { background: rgba(59,130,246,0.15); }
+
+  &--week     .task-group__title,
+  &--week     .task-group__toggle { color: #a78bfa; }
+  &--week     .task-group__count  { background: rgba(139,92,246,0.15); }
+
+  &--done .task-group__count { background: rgba(16,185,129,0.15); }
+}
+
+// ── Filter-Buttons ───────────────────────────────
 .filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   padding: 0.4rem 0.9rem;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -77,6 +139,13 @@
 
   &:hover { color: #fff; }
   &.active { background: #2a2a2a; color: #fff; }
+
+  &__count {
+    font-size: 0.72rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 0.05rem 0.4rem;
+  }
 }
 
 .btn-new {
@@ -100,5 +169,4 @@
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
-
 @keyframes spin { to { transform: rotate(360deg); } }
