@@ -1,0 +1,40 @@
+<div class="profile-select">
+  <header class="profile-select__header">
+    <h1 class="profile-select__title">Familien-Organizer</h1>
+    <p class="profile-select__subtitle">Wer bist du heute?</p>
+  </header>
+
+  @if (loading()) {
+    <div class="profile-select__loading">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="profile-select__error">{{ error() }}</div>
+  }
+
+  @if (!loading() && !error()) {
+    <div class="profile-select__grid">
+      @for (user of users(); track user.id) {
+        <button
+          class="profile-select__card"
+          (click)="selectProfile(user)"
+          [attr.aria-label]="'Profil von ' + user.displayName + ' auswählen'"
+        >
+          <div
+            class="profile-select__avatar"
+            [style.background-color]="user.avatarColor"
+          >
+            {{ getInitials(user.displayName) }}
+          </div>
+          <span class="profile-select__name">{{ user.displayName }}</span>
+          @if (user.role === 'PARENT') {
+            <span class="profile-select__role-badge">Elternteil</span>
+          }
+          <span class="profile-select__points">⭐ {{ user.totalPoints }} Punkte</span>
+        </button>
+      }
+    </div>
+  }
+</div>

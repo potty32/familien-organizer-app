@@ -1,0 +1,134 @@
+.profile-select {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #141414;
+
+  &__header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  &__title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    color: #8c8c8c;
+  }
+
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    max-width: 900px;
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: transform 0.15s ease;
+
+    &:hover {
+      transform: scale(1.06);
+
+      .profile-select__name {
+        color: #fff;
+      }
+
+      .profile-select__avatar {
+        box-shadow: 0 0 0 3px #fff;
+      }
+    }
+
+    &:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 4px;
+      border-radius: 12px;
+    }
+  }
+
+  &__avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    transition: box-shadow 0.15s ease;
+    box-shadow: 0 0 0 3px transparent;
+    user-select: none;
+  }
+
+  &__name {
+    font-size: 1rem;
+    color: #b3b3b3;
+    transition: color 0.15s ease;
+    font-weight: 500;
+  }
+
+  &__role-badge {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.12);
+    color: #d4d4d4;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  &__points {
+    font-size: 0.85rem;
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+  }
+
+  &__error {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
