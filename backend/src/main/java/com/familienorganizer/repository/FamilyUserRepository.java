@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface FamilyUserRepository extends JpaRepository<FamilyUser, UUID> {
 
     List<FamilyUser> findByActiveTrueOrderByDisplayNameAsc();
+
+    List<FamilyUser> findByActiveTrueOrderByTotalPointsDesc();
 }

@@ -36,7 +36,7 @@ export class ProfileSelectComponent implements OnInit {
 
   selectProfile(user: User): void {
     this.sessionService.selectProfile({ userId: user.id }).subscribe({
-      next: () => this.router.navigate(['/app']),
+      next: () => this.router.navigate(['/app/dashboard']),
       error: () => this.error.set('Profil konnte nicht ausgewählt werden.')
     });
   }

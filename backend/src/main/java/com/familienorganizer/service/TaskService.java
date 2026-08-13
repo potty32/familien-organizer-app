@@ -5,9 +5,11 @@ import com.familienorganizer.dto.TaskResponse;
 import com.familienorganizer.dto.TaskUserRef;
 import com.familienorganizer.dto.UpdateTaskStatusRequest;
 import com.familienorganizer.entity.FamilyUser;
+import com.familienorganizer.entity.PointTransaction;
 import com.familienorganizer.entity.Task;
 import com.familienorganizer.entity.TaskStatus;
 import com.familienorganizer.repository.FamilyUserRepository;
+import com.familienorganizer.repository.PointTransactionRepository;
 import com.familienorganizer.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final FamilyUserRepository userRepository;
+    private final PointTransactionRepository pointTransactionRepository;
 
     public List<TaskResponse> getAll(TaskStatus status, UUID assignedToId) {
         return taskRepository.findByFilters(status, assignedToId)
@@ -89,14 +92,22 @@ public class TaskService {
             FamilyUser user = task.getAssignedTo();
             user.setTotalPoints(user.getTotalPoints() + task.getPoints());
             userRepository.save(user);
+            pointTransactionRepository.save(PointTransaction.builder()
+                    .user(user).task(task).points(task.getPoints())
+                    .reason("Aufgabe '" + task.getTitle() + "' abgeschlossen")
+                    .build());
         }
 
         // Punkte-Abzug beim Wechsel VON DONE weg
         if (oldStatus == TaskStatus.DONE && task.getPoints() != null) {
             FamilyUser user = task.getAssignedTo();
-            int newTotal = Math.max(0, user.getTotalPoints() - task.getPoints());
-            user.setTotalPoints(newTotal);
+            int deducted = Math.min(task.getPoints(), user.getTotalPoints());
+            user.setTotalPoints(user.getTotalPoints() - deducted);
             userRepository.save(user);
+            pointTransactionRepository.save(PointTransaction.builder()
+                    .user(user).task(task).points(-deducted)
+                    .reason("Aufgabe '" + task.getTitle() + "' wieder geöffnet")
+                    .build());
         }
 
         task.setStatus(newStatus);

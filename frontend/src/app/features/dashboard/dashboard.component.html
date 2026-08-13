@@ -1,0 +1,69 @@
+<div class="dashboard">
+
+  @if (loading()) {
+    <div class="dashboard__loading"><div class="spinner"></div></div>
+  }
+
+  @if (error()) {
+    <div class="dashboard__error">{{ error() }}</div>
+  }
+
+  @if (dashboard(); as data) {
+    <div class="dashboard__grid">
+
+      <!-- Leaderboard -->
+      <section class="card leaderboard">
+        <h2 class="card__title">🏆 Rangliste</h2>
+        <div class="leaderboard__list">
+          @for (entry of data.leaderboard; track entry.userId) {
+            @let maxPts = data.leaderboard[0].totalPoints;
+            <div class="leaderboard__row" [class.leaderboard__row--me]="isActiveUser(entry.userId)">
+              <span class="leaderboard__medal">{{ getMedal(entry.rank) || entry.rank }}</span>
+              <div class="leaderboard__avatar" [style.background-color]="entry.avatarColor">
+                {{ getInitials(entry.displayName) }}
+              </div>
+              <div class="leaderboard__info">
+                <span class="leaderboard__name">
+                  {{ entry.displayName }}
+                  @if (isActiveUser(entry.userId)) { <span class="leaderboard__you">(du)</span> }
+                </span>
+                <div class="leaderboard__bar-track">
+                  <div
+                    class="leaderboard__bar"
+                    [style.width]="getBarWidth(entry.totalPoints, maxPts)"
+                    [style.background-color]="entry.avatarColor"
+                  ></div>
+                </div>
+              </div>
+              <span class="leaderboard__points">{{ entry.totalPoints }} Pkt.</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Statistiken -->
+      <section class="card stats">
+        <h2 class="card__title">📊 Übersicht</h2>
+        <div class="stats__grid">
+          <div class="stat-tile stat-tile--blue">
+            <span class="stat-tile__value">{{ data.statistics.openTasksTotal }}</span>
+            <span class="stat-tile__label">Offen</span>
+          </div>
+          <div class="stat-tile stat-tile--amber">
+            <span class="stat-tile__value">{{ data.statistics.completedToday }}</span>
+            <span class="stat-tile__label">Heute erledigt</span>
+          </div>
+          <div class="stat-tile stat-tile--green">
+            <span class="stat-tile__value">{{ data.statistics.completedThisWeek }}</span>
+            <span class="stat-tile__label">Diese Woche</span>
+          </div>
+        </div>
+
+        <a routerLink="/app/tasks" class="stats__cta">
+          Zu den Aufgaben →
+        </a>
+      </section>
+
+    </div>
+  }
+</div>
