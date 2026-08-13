@@ -1,0 +1,149 @@
+package com.familienorganizer.service;
+
+import com.familienorganizer.dto.CreateTaskRequest;
+import com.familienorganizer.dto.TaskResponse;
+import com.familienorganizer.dto.TaskUserRef;
+import com.familienorganizer.dto.UpdateTaskStatusRequest;
+import com.familienorganizer.entity.FamilyUser;
+import com.familienorganizer.entity.Task;
+import com.familienorganizer.entity.TaskStatus;
+import com.familienorganizer.repository.FamilyUserRepository;
+import com.familienorganizer.repository.TaskRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class TaskService {
+
+    private final TaskRepository taskRepository;
+    private final FamilyUserRepository userRepository;
+
+    public List<TaskResponse> getAll(TaskStatus status, UUID assignedToId) {
+        return taskRepository.findByFilters(status, assignedToId)
+                .stream().map(this::toResponse).toList();
+    }
+
+    public List<TaskResponse> getMyTasks(UUID activeUserId) {
+        return taskRepository.findByAssignedToIdOrderByCreatedAtDesc(activeUserId)
+                .stream().map(this::toResponse).toList();
+    }
+
+    public TaskResponse getById(UUID id) {
+        return toResponse(findOrThrow(id));
+    }
+
+    @Transactional
+    public TaskResponse create(CreateTaskRequest request, UUID createdById) {
+        FamilyUser assignedTo = findUserOrThrow(request.assignedToId());
+        FamilyUser createdBy  = findUserOrThrow(createdById);
+
+        Task task = Task.builder()
+                .title(request.title())
+                .description(request.description())
+                .points(request.points())
+                .assignedTo(assignedTo)
+                .createdBy(createdBy)
+                .dueDate(request.dueDate())
+                .recurring(request.recurring())
+                .recurrencePattern(request.recurrencePattern())
+                .build();
+
+        return toResponse(taskRepository.save(task));
+    }
+
+    @Transactional
+    public TaskResponse update(UUID id, CreateTaskRequest request) {
+        Task task = findOrThrow(id);
+        FamilyUser assignedTo = findUserOrThrow(request.assignedToId());
+
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        task.setPoints(request.points());
+        task.setAssignedTo(assignedTo);
+        task.setDueDate(request.dueDate());
+        task.setRecurring(request.recurring());
+        task.setRecurrencePattern(request.recurrencePattern());
+
+        return toResponse(taskRepository.save(task));
+    }
+
+    @Transactional
+    public TaskResponse updateStatus(UUID id, UpdateTaskStatusRequest request) {
+        Task task = findOrThrow(id);
+        TaskStatus oldStatus = task.getStatus();
+        TaskStatus newStatus = request.status();
+
+        if (oldStatus == newStatus) {
+            return toResponse(task);
+        }
+
+        // Punkte-Gutschrift beim Wechsel ZU DONE
+        if (newStatus == TaskStatus.DONE && task.getPoints() != null) {
+            FamilyUser user = task.getAssignedTo();
+            user.setTotalPoints(user.getTotalPoints() + task.getPoints());
+            userRepository.save(user);
+        }
+
+        // Punkte-Abzug beim Wechsel VON DONE weg
+        if (oldStatus == TaskStatus.DONE && task.getPoints() != null) {
+            FamilyUser user = task.getAssignedTo();
+            int newTotal = Math.max(0, user.getTotalPoints() - task.getPoints());
+            user.setTotalPoints(newTotal);
+            userRepository.save(user);
+        }
+
+        task.setStatus(newStatus);
+        return toResponse(taskRepository.save(task));
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        Task task = findOrThrow(id);
+        // Punkte zurückbuchen falls Aufgabe bereits erledigt war
+        if (task.getStatus() == TaskStatus.DONE && task.getPoints() != null) {
+            FamilyUser user = task.getAssignedTo();
+            int newTotal = Math.max(0, user.getTotalPoints() - task.getPoints());
+            user.setTotalPoints(newTotal);
+            userRepository.save(user);
+        }
+        taskRepository.delete(task);
+    }
+
+    private Task findOrThrow(UUID id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Aufgabe nicht gefunden: " + id));
+    }
+
+    private FamilyUser findUserOrThrow(UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Benutzer nicht gefunden: " + id));
+    }
+
+    private TaskResponse toResponse(Task task) {
+        return new TaskResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getPoints(),
+                toUserRef(task.getAssignedTo()),
+                toUserRef(task.getCreatedBy()),
+                task.getDueDate(),
+                task.isRecurring(),
+                task.getRecurrencePattern(),
+                task.getCreatedAt(),
+                task.getUpdatedAt()
+        );
+    }
+
+    private TaskUserRef toUserRef(FamilyUser user) {
+        return new TaskUserRef(user.getId(), user.getDisplayName(), user.getAvatarColor());
+    }
+}

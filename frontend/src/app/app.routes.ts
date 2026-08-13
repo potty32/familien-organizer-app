@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { sessionGuard } from './core/guards/session.guard';
 
 export const routes: Routes = [
   {
@@ -7,7 +8,23 @@ export const routes: Routes = [
       import('./features/profile-select/profile-select.component').then(m => m.ProfileSelectComponent)
   },
   {
-    path: '**',
-    redirectTo: ''
-  }
+    path: 'app',
+    canActivate: [sessionGuard],
+    loadComponent: () =>
+      import('./features/app-shell/app-shell.component').then(m => m.AppShellComponent),
+    children: [
+      { path: '', redirectTo: 'tasks', pathMatch: 'full' },
+      {
+        path: 'tasks',
+        loadComponent: () =>
+          import('./features/tasks/task-list/task-list.component').then(m => m.TaskListComponent)
+      },
+      {
+        path: 'tasks/new',
+        loadComponent: () =>
+          import('./features/tasks/create-task/create-task.component').then(m => m.CreateTaskComponent)
+      }
+    ]
+  },
+  { path: '**', redirectTo: '' }
 ];

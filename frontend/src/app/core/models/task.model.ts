@@ -16,7 +16,7 @@ export interface Task {
   assignedTo: TaskUser;
   createdBy: TaskUser;
   dueDate?: string;
-  isRecurring: boolean;
+  recurring: boolean;
   recurrencePattern?: RecurrencePattern;
   createdAt: string;
 }
@@ -27,7 +27,7 @@ export interface CreateTaskRequest {
   points?: number;
   assignedToId: string;
   dueDate?: string;
-  isRecurring: boolean;
+  recurring: boolean;
   recurrencePattern?: RecurrencePattern;
 }
 

@@ -1,0 +1,25 @@
+<div class="shell">
+  <nav class="shell__nav">
+    <span class="shell__brand">Familien-Organizer</span>
+
+    <div class="shell__links">
+      <a routerLink="/app/tasks" routerLinkActive="active" class="shell__link">Aufgaben</a>
+    </div>
+
+    <div class="shell__user">
+      @if (session.activeUser(); as user) {
+        <div class="shell__avatar" [style.background-color]="user.avatarColor">
+          {{ getInitials(user.displayName) }}
+        </div>
+        <span class="shell__username">{{ user.displayName }}</span>
+      }
+      <button class="shell__logout" (click)="logout()" title="Profil wechseln">
+        ⇦
+      </button>
+    </div>
+  </nav>
+
+  <main class="shell__content">
+    <router-outlet />
+  </main>
+</div>

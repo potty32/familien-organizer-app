@@ -1,0 +1,46 @@
+<article class="task-card" [class]="'task-card--' + task().status.toLowerCase()">
+  <div class="task-card__header">
+    <span class="task-card__status-badge">{{ statusLabel }}</span>
+    @if (task().points) {
+      <span class="task-card__points">⭐ {{ task().points }} Pkt.</span>
+    }
+    @if (task().recurring) {
+      <span class="task-card__recurring" title="Wiederkehrende Aufgabe">🔁</span>
+    }
+  </div>
+
+  <h3 class="task-card__title">{{ task().title }}</h3>
+
+  @if (task().description) {
+    <p class="task-card__description">{{ task().description }}</p>
+  }
+
+  <div class="task-card__meta">
+    <div class="task-card__assignee">
+      <div class="task-card__avatar" [style.background-color]="task().assignedTo.avatarColor">
+        {{ getInitials(task().assignedTo.displayName) }}
+      </div>
+      <span>{{ task().assignedTo.displayName }}</span>
+    </div>
+    @if (task().dueDate) {
+      <span class="task-card__due">📅 {{ task().dueDate | date:'dd.MM.' }}</span>
+    }
+  </div>
+
+  <div class="task-card__actions">
+    @switch (task().status) {
+      @case ('OPEN') {
+        <button class="btn btn--secondary" (click)="changeStatus('IN_PROGRESS')">Starten</button>
+        <button class="btn btn--success" (click)="changeStatus('DONE')">Erledigt</button>
+      }
+      @case ('IN_PROGRESS') {
+        <button class="btn btn--ghost" (click)="changeStatus('OPEN')">Zurücksetzen</button>
+        <button class="btn btn--success" (click)="changeStatus('DONE')">Erledigt</button>
+      }
+      @case ('DONE') {
+        <button class="btn btn--ghost" (click)="changeStatus('OPEN')">Wieder öffnen</button>
+      }
+    }
+    <button class="btn btn--danger" (click)="onDelete()">Löschen</button>
+  </div>
+</article>

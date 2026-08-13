@@ -1,0 +1,100 @@
+<div class="create-task">
+  <div class="create-task__header">
+    <a routerLink="/app/tasks" class="create-task__back">← Zurück</a>
+    <h1 class="create-task__title">Neue Aufgabe</h1>
+  </div>
+
+  @if (error()) {
+    <div class="create-task__error">{{ error() }}</div>
+  }
+
+  <form class="create-task__form" [formGroup]="form" (ngSubmit)="submit()">
+
+    <div class="field">
+      <label class="field__label" for="title">Titel *</label>
+      <input
+        id="title"
+        class="field__input"
+        [class.field__input--error]="form.get('title')?.invalid && form.get('title')?.touched"
+        type="text"
+        formControlName="title"
+        placeholder="z.B. Zimmer aufräumen"
+      />
+      @if (form.get('title')?.errors?.['required'] && form.get('title')?.touched) {
+        <span class="field__error">Titel ist erforderlich.</span>
+      }
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="description">Beschreibung</label>
+      <textarea
+        id="description"
+        class="field__input field__input--textarea"
+        formControlName="description"
+        rows="3"
+        placeholder="Optional: weitere Details..."
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label class="field__label" for="assignedTo">Zugewiesen an *</label>
+        <select id="assignedTo" class="field__input field__input--select" formControlName="assignedToId">
+          <option value="" disabled>Person auswählen…</option>
+          @for (user of users(); track user.id) {
+            <option [value]="user.id">{{ user.displayName }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="points">Punkte</label>
+        <input
+          id="points"
+          class="field__input"
+          type="number"
+          formControlName="points"
+          placeholder="0–1000"
+          min="0"
+          max="1000"
+        />
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="dueDate">Fällig am</label>
+        <input
+          id="dueDate"
+          class="field__input"
+          type="date"
+          formControlName="dueDate"
+        />
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field__label field__label--checkbox">
+        <input type="checkbox" formControlName="recurring" />
+        <span>Wiederkehrende Aufgabe</span>
+      </label>
+    </div>
+
+    @if (recurringEnabled) {
+      <div class="field">
+        <label class="field__label" for="recurrence">Wiederholungsmuster</label>
+        <select id="recurrence" class="field__input field__input--select" formControlName="recurrencePattern">
+          <option value="DAILY">Täglich</option>
+          <option value="WEEKLY">Wöchentlich</option>
+          <option value="MONTHLY">Monatlich</option>
+        </select>
+      </div>
+    }
+
+    <div class="create-task__footer">
+      <a routerLink="/app/tasks" class="btn btn--ghost">Abbrechen</a>
+      <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+        {{ submitting() ? 'Wird gespeichert…' : 'Aufgabe erstellen' }}
+      </button>
+    </div>
+
+  </form>
+</div>

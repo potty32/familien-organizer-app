@@ -1,0 +1,119 @@
+.task-card {
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: border-color 0.15s;
+
+  &:hover { border-color: #3a3a3a; }
+
+  &--done {
+    opacity: 0.6;
+    .task-card__title { text-decoration: line-through; }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__status-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    .task-card--open & { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .task-card--in_progress & { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .task-card--done & { background: rgba(16,185,129,0.15); color: #34d399; }
+  }
+
+  &__points {
+    font-size: 0.8rem;
+    color: #f59e0b;
+    font-weight: 600;
+    margin-left: auto;
+  }
+
+  &__recurring {
+    font-size: 0.85rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f0f0f0;
+    line-height: 1.3;
+  }
+
+  &__description {
+    font-size: 0.875rem;
+    color: #8c8c8c;
+    line-height: 1.5;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.2rem;
+  }
+
+  &__assignee {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: #b3b3b3;
+  }
+
+  &__avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  &__due {
+    font-size: 0.8rem;
+    color: #8c8c8c;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+  }
+}
+
+.btn {
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.15s, background 0.15s;
+
+  &:hover { opacity: 0.85; }
+
+  &--secondary { background: #2a3a5c; color: #93c5fd; border-color: #3b5580; }
+  &--success   { background: #14532d; color: #86efac; border-color: #166534; }
+  &--ghost     { background: transparent; color: #8c8c8c; border-color: #3a3a3a; }
+  &--danger    { background: transparent; color: #f87171; border-color: transparent;
+                 margin-left: auto;
+                 &:hover { background: rgba(239,68,68,0.1); } }
+}

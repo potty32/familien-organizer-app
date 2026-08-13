@@ -1,0 +1,85 @@
+<div class="task-list">
+  <div class="task-list__toolbar">
+    <div class="task-list__filters">
+      <button
+        class="filter-btn"
+        [class.active]="filterMode() === 'all'"
+        (click)="setFilter('all')"
+      >Alle Aufgaben</button>
+      <button
+        class="filter-btn"
+        [class.active]="filterMode() === 'mine'"
+        (click)="setFilter('mine')"
+      >Meine Aufgaben</button>
+    </div>
+    <a routerLink="/app/tasks/new" class="btn-new">+ Neue Aufgabe</a>
+  </div>
+
+  @if (error()) {
+    <div class="task-list__error">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="task-list__loading">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  @if (!loading()) {
+    @if (filteredTasks().length === 0) {
+      <div class="task-list__empty">
+        <p>Keine Aufgaben vorhanden.</p>
+        <a routerLink="/app/tasks/new" class="btn-new">+ Erste Aufgabe anlegen</a>
+      </div>
+    }
+
+    @if (inProgressTasks().length > 0) {
+      <section class="task-list__section">
+        <h2 class="task-list__section-title task-list__section-title--progress">
+          In Arbeit ({{ inProgressTasks().length }})
+        </h2>
+        <div class="task-list__grid">
+          @for (task of inProgressTasks(); track task.id) {
+            <app-task-card
+              [task]="task"
+              (statusChange)="onStatusChange($event)"
+              (deleteTask)="onDelete($event)"
+            />
+          }
+        </div>
+      </section>
+    }
+
+    @if (openTasks().length > 0) {
+      <section class="task-list__section">
+        <h2 class="task-list__section-title">Offen ({{ openTasks().length }})</h2>
+        <div class="task-list__grid">
+          @for (task of openTasks(); track task.id) {
+            <app-task-card
+              [task]="task"
+              (statusChange)="onStatusChange($event)"
+              (deleteTask)="onDelete($event)"
+            />
+          }
+        </div>
+      </section>
+    }
+
+    @if (doneTasks().length > 0) {
+      <section class="task-list__section">
+        <h2 class="task-list__section-title task-list__section-title--done">
+          Erledigt ({{ doneTasks().length }})
+        </h2>
+        <div class="task-list__grid">
+          @for (task of doneTasks(); track task.id) {
+            <app-task-card
+              [task]="task"
+              (statusChange)="onStatusChange($event)"
+              (deleteTask)="onDelete($event)"
+            />
+          }
+        </div>
+      </section>
+    }
+  }
+</div>
