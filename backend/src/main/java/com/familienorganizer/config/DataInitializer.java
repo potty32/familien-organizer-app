@@ -26,11 +26,11 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         List<FamilyUser> members = List.of(
-                FamilyUser.builder().displayName("Mama").avatarColor("#EC4899").role(Role.PARENT).build(),
-                FamilyUser.builder().displayName("Papa").avatarColor("#3B82F6").role(Role.PARENT).build(),
-                FamilyUser.builder().displayName("Kind 1").avatarColor("#10B981").role(Role.CHILD).build(),
-                FamilyUser.builder().displayName("Kind 2").avatarColor("#F59E0B").role(Role.CHILD).build(),
-                FamilyUser.builder().displayName("Kind 3").avatarColor("#8B5CF6").role(Role.CHILD).build()
+                FamilyUser.builder().displayName("Yvonne").avatarColor("#EC4899").role(Role.PARENT).pinCode("1234").build(),
+                FamilyUser.builder().displayName("Simon").avatarColor("#3B82F6").role(Role.PARENT).pinCode("2345").build(),
+                FamilyUser.builder().displayName("Tim").avatarColor("#10B981").role(Role.CHILD).build(),
+                FamilyUser.builder().displayName("Chris").avatarColor("#F59E0B").role(Role.CHILD).build(),
+                FamilyUser.builder().displayName("Jan").avatarColor("#8B5CF6").role(Role.CHILD).build()
         );
 
         repository.saveAll(members);

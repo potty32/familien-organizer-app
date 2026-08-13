@@ -5,9 +5,7 @@
   </header>
 
   @if (loading()) {
-    <div class="profile-select__loading">
-      <div class="spinner"></div>
-    </div>
+    <div class="profile-select__loading"><div class="spinner"></div></div>
   }
 
   @if (error()) {
@@ -19,22 +17,52 @@
       @for (user of users(); track user.id) {
         <button
           class="profile-select__card"
-          (click)="selectProfile(user)"
+          (click)="onCardClick(user)"
           [attr.aria-label]="'Profil von ' + user.displayName + ' auswählen'"
         >
-          <div
-            class="profile-select__avatar"
-            [style.background-color]="user.avatarColor"
-          >
+          <div class="profile-select__avatar" [style.background-color]="user.avatarColor">
             {{ getInitials(user.displayName) }}
           </div>
           <span class="profile-select__name">{{ user.displayName }}</span>
           @if (user.role === 'PARENT') {
-            <span class="profile-select__role-badge">Elternteil</span>
+            <span class="profile-select__role-badge">🔒 Elternteil</span>
           }
           <span class="profile-select__points">⭐ {{ user.totalPoints }} Punkte</span>
         </button>
       }
+    </div>
+  }
+
+  <!-- PIN-Dialog -->
+  @if (pendingUser(); as user) {
+    <div class="pin-overlay" (click)="cancelPin()">
+      <div class="pin-dialog" (click)="$event.stopPropagation()">
+        <div class="pin-dialog__avatar" [style.background-color]="user.avatarColor">
+          {{ getInitials(user.displayName) }}
+        </div>
+        <h2 class="pin-dialog__name">{{ user.displayName }}</h2>
+        <p class="pin-dialog__hint">PIN eingeben</p>
+
+        <input
+          class="pin-dialog__input"
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          [(ngModel)]="pin"
+          (keyup.enter)="submitPin()"
+          placeholder="••••"
+          autofocus
+        />
+
+        @if (pinError) {
+          <p class="pin-dialog__error">{{ pinError }}</p>
+        }
+
+        <div class="pin-dialog__actions">
+          <button class="pin-dialog__btn pin-dialog__btn--cancel" (click)="cancelPin()">Abbrechen</button>
+          <button class="pin-dialog__btn pin-dialog__btn--confirm" (click)="submitPin()">OK</button>
+        </div>
+      </div>
     </div>
   }
 </div>
