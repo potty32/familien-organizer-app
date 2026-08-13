@@ -28,6 +28,11 @@ export const routes: Routes = [
         path: 'tasks/new',
         loadComponent: () =>
           import('./features/tasks/create-task/create-task.component').then(m => m.CreateTaskComponent)
+      },
+      {
+        path: 'meal-wishes',
+        loadComponent: () =>
+          import('./features/meal-wishes/meal-wishes.component').then(m => m.MealWishesComponent)
       }
     ]
   },

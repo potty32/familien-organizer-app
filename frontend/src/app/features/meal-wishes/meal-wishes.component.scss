@@ -1,0 +1,385 @@
+.meal-wishes {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  &__error {
+    color: #f87171;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  &__loading { display: flex; justify-content: center; padding: 4rem; }
+
+  &__empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #8c8c8c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__empty-icon { font-size: 3rem; }
+  &__empty-hint { font-size: 0.85rem; }
+}
+
+// ── Tab-Bar ──────────────────────────────────────
+.tab-bar {
+  display: flex;
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 0.3rem;
+  gap: 0.3rem;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #8c8c8c;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  transition: all 0.15s;
+
+  &:hover { color: #fff; }
+  &.active { background: #2a2a2a; color: #fff; }
+
+  &__badge {
+    background: rgba(245,158,11,0.2);
+    color: #fbbf24;
+    border-radius: 100px;
+    padding: 0.05rem 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    &--green { background: rgba(16,185,129,0.2); color: #34d399; }
+  }
+}
+
+// ── Neuer-Wunsch-Formular ────────────────────────
+.new-wish-form {
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+
+  &__fields {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 180px;
+    background: #141414;
+    border: 1px solid #3a3a3a;
+    border-radius: 7px;
+    padding: 0.55rem 0.8rem;
+    color: #fff;
+    font-size: 0.9rem;
+    font-family: inherit;
+
+    &:focus { outline: none; border-color: #2563eb; }
+    &.error { border-color: #ef4444; }
+    &::placeholder { color: #555; }
+  }
+}
+
+.btn-submit {
+  padding: 0.55rem 1.1rem;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 7px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.15s;
+
+  &:hover { background: #15803d; }
+}
+
+// ── Sektionen ────────────────────────────────────
+.wish-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &__title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #2a2a2a;
+
+    &--pending  { color: #fbbf24; }
+    &--accepted { color: #34d399; }
+    &--rejected { color: #6b7280; }
+  }
+}
+
+.wish-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  &--compact { gap: 0.4rem; }
+}
+
+// ── Wunsch-Karten ────────────────────────────────
+.wish-card {
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  &--pending  { border-left: 3px solid #fbbf24; }
+  &--accepted { border-left: 3px solid #34d399; }
+  &--rejected { border-left: 3px solid #374151; opacity: 0.6; flex-direction: row; align-items: center; gap: 1rem; }
+
+  &__body { display: flex; flex-direction: column; gap: 0.25rem; }
+
+  &__name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f0f0f0;
+  }
+
+  &__desc { font-size: 0.85rem; color: #8c8c8c; }
+
+  &__date {
+    font-size: 0.82rem;
+    color: #60a5fa;
+    font-weight: 500;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__avatar {
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+
+    &--sm { width: 18px; height: 18px; font-size: 0.55rem; }
+  }
+
+  &__author { font-size: 0.82rem; color: #b3b3b3; }
+
+  &__points-hint  { font-size: 0.78rem; color: #f59e0b; margin-left: auto; }
+  &__points-awarded { font-size: 0.78rem; color: #34d399; margin-left: auto; }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__accept-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(37,99,235,0.08);
+    border-radius: 7px;
+    border: 1px solid rgba(37,99,235,0.2);
+  }
+
+  &__accept-label { font-size: 0.8rem; color: #9ca3af; }
+
+  &__date-input {
+    background: #141414;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+
+    &:focus { outline: none; border-color: #2563eb; }
+  }
+
+  &__accept-actions { display: flex; gap: 0.5rem; }
+}
+
+// ── Buttons ──────────────────────────────────────
+.btn {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: inherit;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.82; }
+
+  &--success { background: #14532d; color: #86efac; border-color: #166534; }
+  &--danger  { background: transparent; color: #f87171; border-color: #7f1d1d; }
+  &--ghost   { background: transparent; color: #9ca3af; border-color: #3a3a3a; }
+  &--sm      { padding: 0.25rem 0.6rem; font-size: 0.77rem; }
+}
+
+.btn-new {
+  padding: 0.45rem 1rem;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: background 0.15s;
+  white-space: nowrap;
+
+  &:hover { background: #1d4ed8; }
+}
+
+// ── Wochenplan-Grid ──────────────────────────────
+.weekly-plan { display: flex; flex-direction: column; gap: 2rem; }
+
+.week-block {
+  &__title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #6b7280;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #2a2a2a;
+  }
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.6rem;
+
+  @media (max-width: 720px) { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 480px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.day-card {
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 0.75rem 0.6rem;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: border-color 0.15s;
+
+  &--today {
+    border-color: #2563eb;
+    background: rgba(37,99,235,0.06);
+
+    .day-card__name { color: #60a5fa; }
+  }
+
+  &--empty { opacity: 0.45; }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  &__name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+  }
+
+  &__date { font-size: 0.7rem; color: #6b7280; }
+
+  &__meals { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  &__empty {
+    font-size: 0.85rem;
+    color: #3a3a3a;
+    text-align: center;
+    margin: auto 0;
+  }
+}
+
+.meal-chip {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+
+  &__icon { font-size: 0.9rem; flex-shrink: 0; margin-top: 1px; }
+
+  &__content { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+
+  &__name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #e5e5e5;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  &__by {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    color: #8c8c8c;
+  }
+
+  &__avatar {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.5rem; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+}
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

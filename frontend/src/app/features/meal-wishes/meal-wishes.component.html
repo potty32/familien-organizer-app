@@ -1,0 +1,275 @@
+<div class="meal-wishes">
+
+  <!-- Toolbar -->
+  <div class="meal-wishes__toolbar">
+    <div class="tab-bar">
+      <button class="tab-btn" [class.active]="view() === 'wishes'" (click)="setView('wishes')">
+        🍽️ Wünsche
+        @if (pendingWishes().length > 0) {
+          <span class="tab-btn__badge">{{ pendingWishes().length }}</span>
+        }
+      </button>
+      <button class="tab-btn" [class.active]="view() === 'plan'" (click)="setView('plan')">
+        📅 Wochenplan
+        @if (weeklyMeals().length > 0) {
+          <span class="tab-btn__badge tab-btn__badge--green">{{ weeklyMeals().length }}</span>
+        }
+      </button>
+    </div>
+    <button class="btn-new" (click)="toggleNewForm()">
+      {{ showNewForm() ? '✕ Abbrechen' : '+ Neuer Wunsch' }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <div class="meal-wishes__error">{{ error() }}</div>
+  }
+
+  <!-- Neuer Wunsch Formular -->
+  @if (showNewForm()) {
+    <form class="new-wish-form" [formGroup]="newForm" (ngSubmit)="submitWish()">
+      <div class="new-wish-form__fields">
+        <input
+          class="new-wish-form__input"
+          [class.error]="newForm.get('name')?.invalid && newForm.get('name')?.touched"
+          type="text"
+          formControlName="name"
+          placeholder="Was möchtest du essen? z.B. Pizza Margherita"
+          autofocus
+        />
+        <input
+          class="new-wish-form__input"
+          type="text"
+          formControlName="description"
+          placeholder="Details (optional)"
+        />
+        <button type="submit" class="btn-submit">Wunsch einreichen ✓</button>
+      </div>
+    </form>
+  }
+
+  @if (loading()) {
+    <div class="meal-wishes__loading"><div class="spinner"></div></div>
+  }
+
+  <!-- ─── Wünsche-Ansicht ─── -->
+  @if (!loading() && view() === 'wishes') {
+
+    @if (pendingWishes().length === 0 && acceptedWishes().length === 0 && rejectedWishes().length === 0) {
+      <div class="meal-wishes__empty">
+        <span class="meal-wishes__empty-icon">🍽️</span>
+        <p>Noch keine Essenswünsche.</p>
+        <button class="btn-new" (click)="toggleNewForm()">+ Ersten Wunsch einreichen</button>
+      </div>
+    }
+
+    <!-- Offen -->
+    @if (pendingWishes().length > 0) {
+      <section class="wish-section">
+        <h2 class="wish-section__title wish-section__title--pending">
+          🟡 Offen ({{ pendingWishes().length }})
+        </h2>
+        <div class="wish-list">
+          @for (wish of pendingWishes(); track wish.id) {
+            <div class="wish-card wish-card--pending">
+              <div class="wish-card__body">
+                <span class="wish-card__name">{{ wish.name }}</span>
+                @if (wish.description) {
+                  <span class="wish-card__desc">{{ wish.description }}</span>
+                }
+              </div>
+              <div class="wish-card__meta">
+                <div class="wish-card__avatar" [style.background-color]="wish.suggestedBy.avatarColor">
+                  {{ getInitials(wish.suggestedBy.displayName) }}
+                </div>
+                <span class="wish-card__author">{{ wish.suggestedBy.displayName }}</span>
+                <span class="wish-card__points-hint">⭐ +5 Pkt. bei Akzeptierung</span>
+              </div>
+
+              <!-- Eltern-Aktionen -->
+              @if (isParent) {
+                @if (acceptingId() === wish.id) {
+                  <div class="wish-card__accept-form">
+                    <label class="wish-card__accept-label">Datum im Wochenplan:</label>
+                    <input type="date" class="wish-card__date-input"
+                      [value]="acceptDate()"
+                      (change)="acceptDate.set($any($event.target).value)" />
+                    <div class="wish-card__accept-actions">
+                      <button class="btn btn--ghost btn--sm" (click)="cancelAccept()">Abbrechen</button>
+                      <button class="btn btn--success btn--sm" (click)="confirmAccept(wish.id)">✓ Bestätigen</button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="wish-card__actions">
+                    <button class="btn btn--success btn--sm" (click)="startAccept(wish.id)">
+                      ✓ Zum Wochenplan
+                    </button>
+                    <button class="btn btn--danger btn--sm" (click)="reject(wish.id)">
+                      ✕ Ablehnen
+                    </button>
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Akzeptiert -->
+    @if (acceptedWishes().length > 0) {
+      <section class="wish-section">
+        <h2 class="wish-section__title wish-section__title--accepted">
+          ✅ Im Wochenplan ({{ acceptedWishes().length }})
+        </h2>
+        <div class="wish-list">
+          @for (wish of acceptedWishes(); track wish.id) {
+            <div class="wish-card wish-card--accepted">
+              <div class="wish-card__body">
+                <span class="wish-card__name">{{ wish.name }}</span>
+                @if (wish.weeklyPlanDate) {
+                  <span class="wish-card__date">
+                    📅 {{ wish.weeklyPlanDate | date:'EEEE, dd.MM.':'':'de' }}
+                  </span>
+                }
+              </div>
+              <div class="wish-card__meta">
+                <div class="wish-card__avatar" [style.background-color]="wish.suggestedBy.avatarColor">
+                  {{ getInitials(wish.suggestedBy.displayName) }}
+                </div>
+                <span class="wish-card__author">{{ wish.suggestedBy.displayName }}</span>
+                @if (wish.pointsAwarded) {
+                  <span class="wish-card__points-awarded">⭐ +5 Pkt. erhalten</span>
+                }
+              </div>
+              @if (isParent) {
+                <div class="wish-card__actions">
+                  <button class="btn btn--ghost btn--sm" (click)="startAccept(wish.id)">
+                    📅 Datum ändern
+                  </button>
+                </div>
+                @if (acceptingId() === wish.id) {
+                  <div class="wish-card__accept-form">
+                    <input type="date" class="wish-card__date-input"
+                      [value]="acceptDate()"
+                      (change)="acceptDate.set($any($event.target).value)" />
+                    <div class="wish-card__accept-actions">
+                      <button class="btn btn--ghost btn--sm" (click)="cancelAccept()">Abbrechen</button>
+                      <button class="btn btn--success btn--sm" (click)="confirmAccept(wish.id)">✓ Speichern</button>
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Abgelehnt -->
+    @if (rejectedWishes().length > 0) {
+      <section class="wish-section">
+        <h2 class="wish-section__title wish-section__title--rejected">
+          ❌ Abgelehnt ({{ rejectedWishes().length }})
+        </h2>
+        <div class="wish-list wish-list--compact">
+          @for (wish of rejectedWishes(); track wish.id) {
+            <div class="wish-card wish-card--rejected">
+              <span class="wish-card__name">{{ wish.name }}</span>
+              <div class="wish-card__meta">
+                <div class="wish-card__avatar wish-card__avatar--sm" [style.background-color]="wish.suggestedBy.avatarColor">
+                  {{ getInitials(wish.suggestedBy.displayName) }}
+                </div>
+                <span class="wish-card__author">{{ wish.suggestedBy.displayName }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+
+  <!-- ─── Wochenplan-Ansicht ─── -->
+  @if (!loading() && view() === 'plan') {
+    @if (weeklyMeals().length === 0) {
+      <div class="meal-wishes__empty">
+        <span class="meal-wishes__empty-icon">📅</span>
+        <p>Noch keine Mahlzeiten im Wochenplan.</p>
+        <p class="meal-wishes__empty-hint">Eltern können Wünsche akzeptieren und einem Tag zuordnen.</p>
+      </div>
+    } @else {
+      <div class="weekly-plan">
+
+        <!-- Diese Woche -->
+        <div class="week-block">
+          <h2 class="week-block__title">Diese Woche</h2>
+          <div class="week-grid">
+            @for (day of thisWeekDays(); track day.date) {
+              <div class="day-card" [class.day-card--today]="day.isToday" [class.day-card--empty]="day.meals.length === 0">
+                <div class="day-card__header">
+                  <span class="day-card__name">{{ day.shortLabel }}</span>
+                  <span class="day-card__date">{{ day.date | date:'dd.MM.' }}</span>
+                </div>
+                @if (day.meals.length > 0) {
+                  <div class="day-card__meals">
+                    @for (meal of day.meals; track meal.id) {
+                      <div class="meal-chip">
+                        <span class="meal-chip__icon">🍽️</span>
+                        <div class="meal-chip__content">
+                          <span class="meal-chip__name">{{ meal.name }}</span>
+                          <div class="meal-chip__by">
+                            <div class="meal-chip__avatar" [style.background-color]="meal.suggestedBy.avatarColor">
+                              {{ getInitials(meal.suggestedBy.displayName) }}
+                            </div>
+                            <span>{{ meal.suggestedBy.displayName }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="day-card__empty">—</p>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Nächste Woche (nur wenn Einträge vorhanden) -->
+        @if (nextWeekDays().length > 0) {
+          <div class="week-block">
+            <h2 class="week-block__title">Nächste Woche</h2>
+            <div class="week-grid">
+              @for (day of nextWeekDays(); track day.date) {
+                <div class="day-card">
+                  <div class="day-card__header">
+                    <span class="day-card__name">{{ day.shortLabel }}</span>
+                    <span class="day-card__date">{{ day.date | date:'dd.MM.' }}</span>
+                  </div>
+                  <div class="day-card__meals">
+                    @for (meal of day.meals; track meal.id) {
+                      <div class="meal-chip">
+                        <span class="meal-chip__icon">🍽️</span>
+                        <div class="meal-chip__content">
+                          <span class="meal-chip__name">{{ meal.name }}</span>
+                          <div class="meal-chip__by">
+                            <div class="meal-chip__avatar" [style.background-color]="meal.suggestedBy.avatarColor">
+                              {{ getInitials(meal.suggestedBy.displayName) }}
+                            </div>
+                            <span>{{ meal.suggestedBy.displayName }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+      </div>
+    }
+  }
+
+</div>
