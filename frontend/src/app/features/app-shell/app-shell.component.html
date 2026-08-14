@@ -1,6 +1,6 @@
 <div class="shell">
   <nav class="shell__nav">
-    <span class="shell__brand">Familien-Organizer</span>
+    <span class="shell__brand">FO</span>
 
     <div class="shell__links">
       <a routerLink="/app/dashboard" routerLinkActive="active" class="shell__link">Dashboard</a>
@@ -11,18 +11,36 @@
 
     <div class="shell__user">
       @if (session.activeUser(); as user) {
+        <span class="shell__points">⭐ {{ user.totalPoints }}</span>
         <div class="shell__avatar" [style.background-color]="user.avatarColor">
           {{ getInitials(user.displayName) }}
         </div>
         <span class="shell__username">{{ user.displayName }}</span>
       }
-      <button class="shell__logout" (click)="logout()" title="Profil wechseln">
-        ⇦
-      </button>
+      <button class="shell__logout" (click)="logout()" title="Profil wechseln">⇦</button>
     </div>
   </nav>
 
   <main class="shell__content">
     <router-outlet />
   </main>
+
+  <nav class="shell__bottom-nav">
+    <a routerLink="/app/dashboard" routerLinkActive="active" class="shell__bottom-link">
+      <span class="shell__bottom-icon">🏠</span>
+      <span class="shell__bottom-label">Dashboard</span>
+    </a>
+    <a routerLink="/app/tasks" routerLinkActive="active" class="shell__bottom-link">
+      <span class="shell__bottom-icon">✅</span>
+      <span class="shell__bottom-label">Aufgaben</span>
+    </a>
+    <a routerLink="/app/meal-wishes" routerLinkActive="active" class="shell__bottom-link">
+      <span class="shell__bottom-icon">🍽️</span>
+      <span class="shell__bottom-label">Essen</span>
+    </a>
+    <a routerLink="/app/shopping-list" routerLinkActive="active" class="shell__bottom-link">
+      <span class="shell__bottom-icon">🛒</span>
+      <span class="shell__bottom-label">Einkauf</span>
+    </a>
+  </nav>
 </div>
