@@ -2,7 +2,6 @@
 set -e
 
 NGINX_PORT=${PORT:-80}
-RESOLVER=$(awk '$1=="nameserver" {print $2; exit}' /etc/resolv.conf)
 
 if [ -z "$BACKEND_URL" ]; then
   echo "WARNUNG: BACKEND_URL nicht gesetzt – API-Proxy deaktiviert, nur SPA wird ausgeliefert"
@@ -29,7 +28,7 @@ server {
 }
 EOF
 else
-  envsubst '${BACKEND_URL} ${PORT} ${RESOLVER}' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/default.conf
+  envsubst '${BACKEND_URL} ${PORT}' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/default.conf
 fi
 
 exec nginx -g "daemon off;"
