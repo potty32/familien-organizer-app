@@ -1,0 +1,142 @@
+<div class="shopping-list">
+  <h1 class="shopping-list__title">Einkaufsliste</h1>
+
+  <form class="shopping-list__form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-row">
+      <input
+        class="form-input"
+        type="text"
+        formControlName="name"
+        placeholder="Was soll gekauft werden?"
+        maxlength="100"
+      />
+      <input
+        class="form-input form-input--note"
+        type="text"
+        formControlName="note"
+        placeholder="Hinweis (optional)"
+      />
+      <button
+        class="btn btn--primary"
+        type="submit"
+        [disabled]="form.invalid || submitting()"
+      >
+        Hinzufügen
+      </button>
+    </div>
+  </form>
+
+  @if (loading()) {
+    <p class="shopping-list__loading">Lädt...</p>
+  } @else {
+
+    <section class="shopping-list__section">
+      <h2 class="section-title section-title--pending">
+        Ausstehend
+        <span class="section-count">{{ pendingItems().length }}</span>
+      </h2>
+
+      @if (pendingItems().length === 0) {
+        <p class="empty-hint">Keine ausstehenden Artikel</p>
+      }
+
+      @for (item of pendingItems(); track item.id) {
+        <div class="item-card item-card--pending">
+          <div class="item-card__info">
+            <span class="item-card__name">{{ item.name }}</span>
+            @if (item.note) {
+              <span class="item-card__note">{{ item.note }}</span>
+            }
+            <span class="item-card__author">
+              <span class="avatar" [style.background]="item.addedBy.avatarColor">
+                {{ item.addedBy.displayName.charAt(0) }}
+              </span>
+              {{ item.addedBy.displayName }}
+            </span>
+          </div>
+          <div class="item-card__actions">
+            @if (isParent()) {
+              <button class="btn btn--buy" (click)="buy(item)" title="+5 Punkte">
+                ✓ Kaufen
+              </button>
+              <button class="btn btn--reject" (click)="reject(item)" title="-5 Punkte">
+                ✗ Ablehnen
+              </button>
+            }
+            @if (canDelete(item)) {
+              <button class="btn btn--delete" (click)="delete(item)">
+                Löschen
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </section>
+
+    @if (boughtItems().length > 0) {
+      <section class="shopping-list__section">
+        <h2 class="section-title section-title--bought">
+          Gekauft
+          <span class="section-count">{{ boughtItems().length }}</span>
+        </h2>
+
+        @for (item of boughtItems(); track item.id) {
+          <div class="item-card item-card--bought">
+            <div class="item-card__info">
+              <span class="item-card__name">{{ item.name }}</span>
+              @if (item.note) {
+                <span class="item-card__note">{{ item.note }}</span>
+              }
+              <span class="item-card__author">
+                <span class="avatar" [style.background]="item.addedBy.avatarColor">
+                  {{ item.addedBy.displayName.charAt(0) }}
+                </span>
+                {{ item.addedBy.displayName }} · +5 Punkte
+              </span>
+            </div>
+            @if (isParent()) {
+              <div class="item-card__actions">
+                <button class="btn btn--delete" (click)="delete(item)">
+                  Löschen
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    @if (rejectedItems().length > 0) {
+      <section class="shopping-list__section">
+        <h2 class="section-title section-title--rejected">
+          Abgelehnt
+          <span class="section-count">{{ rejectedItems().length }}</span>
+        </h2>
+
+        @for (item of rejectedItems(); track item.id) {
+          <div class="item-card item-card--rejected">
+            <div class="item-card__info">
+              <span class="item-card__name">{{ item.name }}</span>
+              @if (item.note) {
+                <span class="item-card__note">{{ item.note }}</span>
+              }
+              <span class="item-card__author">
+                <span class="avatar" [style.background]="item.addedBy.avatarColor">
+                  {{ item.addedBy.displayName.charAt(0) }}
+                </span>
+                {{ item.addedBy.displayName }} · -5 Punkte
+              </span>
+            </div>
+            @if (isParent()) {
+              <div class="item-card__actions">
+                <button class="btn btn--delete" (click)="delete(item)">
+                  Löschen
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+  }
+</div>
